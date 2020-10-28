@@ -67,6 +67,10 @@
       name: 'anastasiya',
       data: []
     },
+    khusan: {
+      name: 'khusan',
+      data: []
+    },
     main: {
       name: 'main',
       data: []
@@ -123,6 +127,7 @@
         taskData['tsaryov'].data = []
         taskData['lyuba'].data = []
         taskData['anastasiya'].data = []
+        taskData['khusan'].data = []
         taskData['main'].data = []
         snapshot.forEach(function (childSnapshot) {
           if (childSnapshot.val().user !== 'main') {
@@ -152,22 +157,20 @@
   }
 </script>
 
-<style>
-  .container-card {
-    margin-top: 30px;
-    padding-top: 5%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 90%;
-    grid-gap: 20px;
+<style lang="scss">
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+    .container-card {
+      margin: 15px 0;
+      display: block;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      min-height: 675px;
+    }
   }
 
-  .container {
-    background-color: #f6f7f9;
-    width: 100%;
-    min-height: 675px;
-  }
 </style>

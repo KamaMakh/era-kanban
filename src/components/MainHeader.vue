@@ -1,41 +1,6 @@
 <template>
   <div class="main-header">
     <h1>ЭРА канбан</h1>
-    <!-- <i class="fas fa-plus"></i> -->
-    <el-form
-      ref="postForm"
-      :model="task"
-      :rules="rules"
-      class="form-container"
-      label-position="top"
-      @submit.prevent="sendItem()"
-    >
-      <el-row style="display: flex; justify-content: center">
-        <el-col :span="12">
-          <el-form-item label="Название" prop="name">
-            <el-input
-              v-model="task.name"
-              autosize
-            />
-          </el-form-item>
-          <el-form-item label="Описание" prop="description">
-            <el-input
-              v-model="task.description"
-              type="textarea"
-              autosize
-            />
-          </el-form-item>
-          <el-form-item label="Сотрудник" prop="user">
-            <el-select v-model="task.user" placeholder="Выберите из списка">
-              <el-option v-for="(user, index) in CONSTANTS.users" :key="index" :label="user.name" :value="user.value" />
-            </el-select>
-          </el-form-item>
-          <el-button v-loading="loading" style="margin: 5px;" type="success" @click="sendItem">
-            Добавить
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-form>
   </div>
 </template>
 

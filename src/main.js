@@ -20,7 +20,9 @@ Vue.prototype['CONSTANTS'] = {
     { name: 'Tex-dir', value: 'tsaryov' },
     { name: 'Lyubov', value: 'lyuba' },
     { name: 'Anastasiya', value: 'anastasiya' },
-    { name: 'Main', value: 'main' }
+    { name: 'Sergey', value: 'sergey' },
+    { name: 'Khusan', value: 'khusan' },
+    { name: 'Main', value: 'main' },
   ]
 }
 

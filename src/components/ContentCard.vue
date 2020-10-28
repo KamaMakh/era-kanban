@@ -1,14 +1,23 @@
 <template>
   <div class="cardContent">
-    <h2>{{item.title}}</h2>
-    <div class="container-button">
-      <div style="font-size: 14px">
+    <div class="cardContent__header">
+      <h2 class="cardContent--title">{{item.title}}</h2>
+      <el-dropdown>
+        <el-button size="small">
+          <i class="el-icon-arrow-down el-icon"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item @click.native="$emit('edit', item)">Редактировать</el-dropdown-item>
+          <el-dropdown-item @click.native="removeItem">Удалить</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
+    <div class="cardContent--button">
+      <div>
         {{ item.description }}
       </div>
-      <div style="margin-top: 15px">
-        <el-button @click="removeItem">Удалить</el-button>
-      </div>
     </div>
+    <div class="cardContent__line" :style="{ background: item.color ? item.color : '#999' }"></div>
   </div>
 </template>
 
@@ -32,24 +41,46 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .cardContent {
   font-size: 10px;
   color: #fff;
-  width: 70%;
-  min-height: 100px;
-  background-color: #4684f6;
-  -webkit-box-shadow: 0px 5px 4px #c0c0c09d;
-  -moz-box-shadow: 0px 5px 4px #c0c0c09d;
-  box-shadow: 0px 5px 4px #c0c0c09d;
-  border-radius: 5px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  margin-bottom: 50px;
-  vertical-align: middle;
+  min-width: 250px;
+  width: 25%;
+  height: 200px;
+  background-color: #fff;
+  text-align: left;
   cursor: pointer;
-  padding-bottom: 20px;
+  padding: 15px;
+  border-right: 1px solid lightgray;
+  box-shadow: 0px 5px 4px #c0c0c09d;
+  position: relative;
+  &--title {
+    color: #333;
+    text-decoration: underline;
+    margin-top: 0;
+    padding-top: 0 !important;
+    font-size: 13px;
+  }
+  &--button {
+    color: #999;
+    font-size: 14px;
+  }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  &__line {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 3px;
+    background: green;
+  }
 }
 
 .card h2 {
