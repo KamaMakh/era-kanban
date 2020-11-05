@@ -148,7 +148,7 @@
         if (snap && snap.val()) {
           dates = JSON.parse(snap.val().dates)
         }
-        console.log(dates);
+        this.dateRange = dates
       });
 
       this.taskLists = taskData

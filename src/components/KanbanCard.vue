@@ -133,10 +133,9 @@
       flex-wrap: wrap;
       &--plus {
         position: absolute;
-        left: auto;
+        left: -23px;
         top: 50%;
         margin-top: -18px;
-        right: -18px;
       }
     }
 
