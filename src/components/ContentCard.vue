@@ -33,7 +33,9 @@ export default {
   props: ['item', 'name'],
   methods: {
     removeItem () {
-      database.ref(`tasks/${this.item.id}`).remove()
+      if (this.checkAdmin()) {
+        database.ref(`tasks/${this.item.id}`).remove()
+      }
     }
   },
   created () {
@@ -65,6 +67,8 @@ export default {
   &--button {
     color: #999;
     font-size: 14px;
+    max-height: calc(100% - 40px);
+    overflow: auto;
   }
   &__header {
     display: flex;

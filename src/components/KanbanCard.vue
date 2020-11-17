@@ -1,8 +1,8 @@
 <template>
-  <div class="card">
-    <h2 class="card-name">{{data.name}}</h2>
+  <div v-if="taskData.name" class="card">
+    <h2 class="card-name">{{taskData.name}}</h2>
     <div class="content-wrap">
-      <ContentCard v-for="(item) in data.data" :key="item.id" :item="item" :name="data.name" @edit="openDialog"></ContentCard>
+      <ContentCard v-for="(item) in taskData.data" :key="item.id" :item="item" :name="taskData.name" @edit="openDialog"></ContentCard>
       <div class="content-wrap--plus">
         <el-button type="primary" icon="el-icon-plus" circle @click="dialog = true"></el-button>
       </div>
@@ -33,7 +33,7 @@
               />
             </el-form-item>
             <el-form-item label="Цвет" prop="color">
-              <el-color-picker v-model="task.color"></el-color-picker>
+              <el-color-picker @active-change="colorChange" v-model="task.color"></el-color-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -54,7 +54,14 @@
 
   export default {
     title: 'KanbanCard',
-    props: ['data'],
+    props: {
+      taskData: {
+        type: Object,
+        default: () => {
+          return {}
+        }
+      }
+    },
     components: {
       ContentCard
     },
@@ -76,37 +83,44 @@
       }
     },
     methods: {
+      colorChange(color) {
+        this.task.color = color;
+      },
       sendItem() {
-        this.$refs.postForm.validate(valid => {
-          if (valid) {
-            this.loading = true
-            let data = {
-              title: this.task.title,
-              description: this.task.description,
-              user: this.data.name,
-              color: this.task.color
+        if (this.checkAdmin()) {
+          this.$refs.postForm.validate(valid => {
+            if (valid) {
+              this.loading = true
+              let data = {
+                title: this.task.title,
+                description: this.task.description,
+                user: this.taskData.name,
+                color: this.task.color
+              }
+              if (this.task.id) {
+                data['id'] = this.task.id
+              }
+              if (this.task.id) {
+                database.ref(`tasks/${this.task.id}`).update(data)
+              } else {
+                database.ref('tasks').push(data)
+              }
+              this.task = {
+                name: '',
+                description: '',
+                color: '#999999'
+              }
+              this.loading = false
+              this.dialog = false
             }
-            if (this.task.id) {
-              data['id'] = this.task.id
-            }
-            if (this.task.id) {
-              database.ref(`tasks/${this.task.id}`).update(data)
-            } else {
-              database.ref('tasks').push(data)
-            }
-            this.task = {
-              name: '',
-              description: '',
-              color: '#999999'
-            }
-            this.loading = false
-            this.dialog = false
-          }
-        })
+          })
+        }
       },
       openDialog(data) {
-        this.task = JSON.parse(JSON.stringify(data))
-        this.dialog = true
+        if (this.checkAdmin()) {
+          this.task = JSON.parse(JSON.stringify(data))
+          this.dialog = true
+        }
       }
     },
     created() {

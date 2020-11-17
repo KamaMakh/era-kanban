@@ -23,8 +23,8 @@
     </div>
     <MainHeader></MainHeader>
     <div class="container">
-      <div class="container-card">
-        <KanbanCard v-for="(data,index) in taskLists" :key="index" :data="data"></KanbanCard>
+      <div v-if="loaded" class="container-card">
+        <KanbanCard v-for="(taskData, index) in taskLists" :key="index" :taskData="taskData"></KanbanCard>
       </div>
     </div>
   </div>
@@ -38,53 +38,6 @@
 
   import database from '../assets/config.js'
 
-  const taskData = {
-    kamron: {
-      name: 'kamron',
-      data: []
-    },
-    abror: {
-      name: 'abror',
-      data: []
-    },
-    sergey: {
-      name: 'sergey',
-      data: []
-    },
-    orlov: {
-      name: 'orlov',
-      data: []
-    },
-    tsaryov: {
-      name: 'tsaryov',
-      data: []
-    },
-    lyuba: {
-      name: 'lyuba',
-      data: []
-    },
-    anastasiya: {
-      name: 'anastasiya',
-      data: []
-    },
-    khusan: {
-      name: 'khusan',
-      data: []
-    },
-    main: {
-      name: 'main',
-      data: []
-    }
-  }
-  // dateRef.on('value', function (snapshot) {
-  //   snapshot.forEach(function (childSnapshot) {
-  //     console.log(childSnapshot.val())
-  //     if (childSnapshot.val().dateRange) {
-  //       dates = childSnapshot.val().dateRange
-  //     }
-  //   })
-  // })
-
   export default {
     name: 'home',
     components: {
@@ -93,8 +46,10 @@
     },
     data: function () {
       return {
-        taskLists: [],
-        dateRange: []
+        taskLists: {},
+        dateRange: [],
+        users: {},
+        loaded: false
       }
     },
     computed: {
@@ -113,46 +68,53 @@
         }, function (error) {
           console.log(error);
         })
+      },
+      getUsers() {
+        return new Promise((resolve) => {
+          const leadsRef = database.ref('users')
+          leadsRef.on('value', (snapshot) => {
+            const Users = {}
+            snapshot.forEach((childSnapshot) => {
+              const obj = childSnapshot.val()
+              obj.id = childSnapshot.key
+              Users[obj.userName] = obj
+            })
+            this.users = Users
+            resolve()
+          })
+        })
+      },
+      getTasks() {
+        const leadsRef = database.ref('tasks')
+        leadsRef.on('value',  (snapshot) => {
+          for (const index in this.users) {
+            if (this.users[index]) {
+              this.users[index]['data'] = []
+            }
+          }
+          snapshot.forEach((childSnapshot) => {
+            const obj = childSnapshot.val()
+            obj.id = childSnapshot.key
+            this.users[childSnapshot.val().user].data.push(obj)
+          })
+          this.taskLists = this.users
+          this.loaded = true
+        })
+
+        const dateRef = database.ref('date')
+        let dates = ''
+        dateRef.on('value',(snap)=>{
+          if (snap && snap.val()) {
+            dates = JSON.parse(snap.val().dates)
+          }
+          this.dateRange = dates
+        });
       }
     },
-    created() {
-    },
     mounted() {
-      const leadsRef = database.ref('tasks')
-      leadsRef.on('value', function (snapshot) {
-        taskData['kamron'].data = []
-        taskData['abror'].data = []
-        taskData['sergey'].data = []
-        taskData['orlov'].data = []
-        taskData['tsaryov'].data = []
-        taskData['lyuba'].data = []
-        taskData['anastasiya'].data = []
-        taskData['khusan'].data = []
-        taskData['main'].data = []
-        snapshot.forEach(function (childSnapshot) {
-          if (childSnapshot.val().user !== 'main') {
-            const obj = childSnapshot.val()
-            obj.id = childSnapshot.key
-            taskData[childSnapshot.val().user].data.push(obj)
-          } else {
-            const obj = childSnapshot.val()
-            obj.id = childSnapshot.key
-            taskData['main'].data.push(obj)
-          }
-        })
+      this.getUsers().then(() => {
+        this.getTasks()
       })
-
-      const dateRef = database.ref('date')
-      let dates = ''
-      dateRef.on('value',(snap)=>{
-        if (snap && snap.val()) {
-          dates = JSON.parse(snap.val().dates)
-        }
-        this.dateRange = dates
-      });
-
-      this.taskLists = taskData
-      this.dateRange = dates
     }
   }
 </script>
