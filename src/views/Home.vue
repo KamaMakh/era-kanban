@@ -93,9 +93,14 @@
             }
           }
           snapshot.forEach((childSnapshot) => {
-            const obj = childSnapshot.val()
-            obj.id = childSnapshot.key
-            this.users[childSnapshot.val().user].data.push(obj)
+            try {
+              const obj = childSnapshot.val()
+              obj.id = childSnapshot.key
+              this.users[childSnapshot.val().user].data.push(obj)
+            } catch (e) {
+              console.log(e);
+              console.log(this.users);
+            }
           })
           this.taskLists = this.users
           this.loaded = true
