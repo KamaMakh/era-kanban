@@ -2,7 +2,13 @@
   <div v-if="taskData.name" class="card">
     <h2 class="card-name">{{taskData.name}}</h2>
     <div class="content-wrap">
-      <ContentCard v-for="(item) in taskData.data" :key="item.id" :item="item" :name="taskData.name" @edit="openDialog"></ContentCard>
+      <ContentCard
+          v-for="(item) in taskData.data"
+          :key="item.id" :item="item"
+          :name="taskData.name"
+          @edit="openDialog"
+          @remove="remove"
+      ></ContentCard>
       <div class="content-wrap--plus">
         <el-button type="primary" icon="el-icon-plus" circle @click="dialog = true"></el-button>
       </div>
@@ -94,7 +100,7 @@
               let data = {
                 title: this.task.title,
                 description: this.task.description,
-                user: this.taskData.name,
+                user: this.taskData.userName,
                 color: this.task.color
               }
               if (this.task.id) {
@@ -115,6 +121,12 @@
             }
           })
         }
+      },
+      remove(task) {
+        // database.ref(`tasks/${id}`).remove()
+        this.$emit("remove", task)
+        this.dialog = true
+        this.dialog = false
       },
       openDialog(data) {
         if (this.checkAdmin()) {

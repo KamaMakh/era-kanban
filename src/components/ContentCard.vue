@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import database from '../assets/config.js'
+// import database from '../assets/config.js'
 
 export default {
   name: 'ContentCard',
@@ -34,7 +34,8 @@ export default {
   methods: {
     removeItem () {
       if (this.checkAdmin()) {
-        database.ref(`tasks/${this.item.id}`).remove()
+        this.$emit('remove', this.item)
+        // database.ref(`tasks/${this.item.id}`).remove()
       }
     }
   },

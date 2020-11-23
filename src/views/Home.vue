@@ -24,7 +24,7 @@
     <MainHeader></MainHeader>
     <div class="container">
       <div v-if="loaded" class="container-card">
-        <KanbanCard v-for="(taskData, index) in taskLists" :key="index" :taskData="taskData"></KanbanCard>
+        <KanbanCard v-for="(taskData, index) in taskLists" :key="index" :taskData="taskData" @remove="removeTask"></KanbanCard>
       </div>
     </div>
   </div>
@@ -49,7 +49,8 @@
         taskLists: {},
         dateRange: [],
         users: {},
-        loaded: false
+        loaded: false,
+        triggerData: null
       }
     },
     computed: {
@@ -100,6 +101,7 @@
             } catch (e) {
               console.log(e);
               console.log(this.users);
+              console.log(childSnapshot.val().user);
             }
           })
           this.taskLists = this.users
@@ -114,7 +116,18 @@
           }
           this.dateRange = dates
         });
-      }
+      },
+      removeTask(task) {
+        database.ref(`tasks/${task.id}`).remove()
+          .then(() => {
+            this.taskLists[task.user].data.forEach((item, key) => {
+              if (item.id === task.id) {
+                this.taskLists[task.user].data.splice(key, 1)
+              }
+            })
+            this.$forceUpdate()
+          })
+      },
     },
     mounted() {
       this.getUsers().then(() => {
